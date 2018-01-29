@@ -19,7 +19,8 @@ describe Oystercard do
 
     it 'raises an error if top up causes balance to exceed limit' do
       subject.top_up(Oystercard::LIMIT)
-      expect { subject.top_up(1) }.to raise_error "Limit exceeded"
+      # allow(subject).to receive(:balance).and_return(90) <--returns 90 but @balance is still zero
+      expect { subject.top_up(1) }.to raise_error "Limit of #{Oystercard::LIMIT} exceeded"
     end
   end
 
