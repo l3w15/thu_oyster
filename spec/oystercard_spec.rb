@@ -8,6 +8,9 @@ describe Oystercard do
     it "has a balance of 0" do
       expect(subject.balance).to eq 0
     end
+    it "is not in journey" do
+      expect(subject.in_journey?).to be false
+    end
   end
 
   describe '#top_up' do
