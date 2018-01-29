@@ -21,6 +21,7 @@ class Oystercard
   end
 
   def touch_in
+    fail "You need at least £1 to travel" if balance < 1
     @in_journey = true
   end
 

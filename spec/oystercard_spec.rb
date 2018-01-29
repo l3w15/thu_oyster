@@ -13,36 +13,55 @@ describe Oystercard do
     end
   end
 
-  describe '#top_up' do
-    it 'adds money to the balance' do
-      expect { subject.top_up 10 }.to change { subject.balance }.by 10
-    end
 
-    it 'raises an error if top up causes balance to exceed limit' do
+  context "when card is fully topped up" do
+
+    before(:each) do
       subject.top_up(Oystercard::LIMIT)
-      # allow(subject).to receive(:balance).and_return(90) <--returns 90 but @balance is still zero
-      expect { subject.top_up(1) }.to raise_error "Limit of #{Oystercard::LIMIT} exceeded"
     end
+
+    describe '#top_up' do
+
+      it 'raises an error if top up causes balance to exceed limit' do
+        # allow(subject).to receive(:balance).and_return(90) <--returns 90 but @balance is still zero
+        expect { subject.top_up(1) }.to raise_error "Limit of #{Oystercard::LIMIT} exceeded"
+      end
+    end
+
+    describe '#deduct' do
+      it 'subtracts money from the balance' do
+        expect { subject.deduct 10 }.to change { subject.balance }.by -10
+      end
+    end
+
+    describe '#touch_in' do
+      it "changes 'in_journey' attribute from false to true" do
+        expect { subject.touch_in }.to change { subject.in_journey? }.from(false).to true
+      end
+    end
+
+    describe '#touch_out' do
+      it "changes 'in_journey' attribute from true to false" do
+        subject.touch_in
+        expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to false
+      end
+    end
+
   end
 
-  describe '#deduct' do
-    it 'subtracts money from the balance' do
-      subject.top_up(Oystercard::LIMIT)
-      expect { subject.deduct 10 }.to change { subject.balance }.by -10
-    end
-  end
 
-  describe '#touch_in' do
-    it "changes 'in_journey' attribute from false to true" do
-      expect { subject.touch_in }.to change { subject.in_journey? }.from(false).to true
+  context "when card is not fully topped up" do
+    describe '#top_up' do
+      it 'adds money to the balance' do
+        expect { subject.top_up 10 }.to change { subject.balance }.by 10
+      end
     end
-  end
 
-  describe '#touch_out' do
-    it "changes 'in_journey' attribute from true to false" do
-      subject.touch_in
-      expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to false
+    describe '#touch_in' do
+      it 'raises an error if balance is less than minimum amount' do
+        expect { subject.touch_in }.to raise_error "You need at least £1 to travel"
+      end
     end
-  end
 
+  end
 end
