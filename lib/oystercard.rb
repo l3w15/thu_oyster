@@ -1,6 +1,7 @@
 class Oystercard
   attr_reader :balance
   LIMIT = 90
+  MINIMUM_TRAVEL_BALANCE = 1
 
   def initialize
     @balance = 0
@@ -21,7 +22,7 @@ class Oystercard
   end
 
   def touch_in
-    fail "You need at least £1 to travel" if balance < 1
+    fail "You need at least £#{MINIMUM_TRAVEL_BALANCE} to travel" unless able_to_travel?
     @in_journey = true
   end
 
@@ -33,6 +34,10 @@ class Oystercard
 
   def limit_reached?(amount)
     @balance + amount > LIMIT
+  end
+
+  def able_to_travel?
+    @balance > MINIMUM_TRAVEL_BALANCE
   end
 
 end

@@ -59,7 +59,7 @@ describe Oystercard do
 
     describe '#touch_in' do
       it 'raises an error if balance is less than minimum amount' do
-        expect { subject.touch_in }.to raise_error "You need at least £1 to travel"
+        expect { subject.touch_in }.to raise_error "You need at least £#{Oystercard::MINIMUM_TRAVEL_BALANCE} to travel"
       end
     end
 
