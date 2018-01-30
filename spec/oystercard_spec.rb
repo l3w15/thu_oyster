@@ -3,6 +3,7 @@ require 'oystercard'
 describe Oystercard do
 
   subject(:oystercard) { described_class.new }
+  let(:station) {'a station'}
 
   context "when created" do
     it "has a balance of 0" do
@@ -30,18 +31,33 @@ describe Oystercard do
 
     describe '#touch_in' do
       it "changes 'in_journey' attribute from false to true" do
-        expect { subject.touch_in }.to change { subject.in_journey? }.from(false).to true
+        expect { subject.touch_in(station) }.to change { subject.in_journey? }.from(false).to true
+      end
+
+      it "sets the entry station" do
+        subject.touch_in(station)
+        expect(subject.entry_station).to eq station
+      end
+
+      it "puts the card in journey" do
+        subject.touch_in(station)
+        expect(subject).to be_in_journey
       end
     end
 
     describe '#touch_out' do
       it "changes 'in_journey' attribute from true to false" do
-        subject.touch_in
+        subject.touch_in(station)
         expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to false
       end
 
       it "deducts the fare from the balance" do
         expect { subject.touch_out }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
+      end
+
+      it "resets the entry station" do
+        subject.touch_in(station)
+        expect { subject.touch_out }.to change { subject.entry_station }.to nil
       end
     end
 
@@ -57,7 +73,7 @@ describe Oystercard do
 
     describe '#touch_in' do
       it 'raises an error if balance is less than minimum amount' do
-        expect { subject.touch_in }.to raise_error "You need at least £#{Oystercard::MINIMUM_FARE} to travel"
+        expect { subject.touch_in(station) }.to raise_error "You need at least £#{Oystercard::MINIMUM_FARE} to travel"
       end
     end
 
