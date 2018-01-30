@@ -28,12 +28,6 @@ describe Oystercard do
       end
     end
 
-    describe '#deduct' do
-      it 'subtracts money from the balance' do
-        expect { subject.deduct 10 }.to change { subject.balance }.by -10
-      end
-    end
-
     describe '#touch_in' do
       it "changes 'in_journey' attribute from false to true" do
         expect { subject.touch_in }.to change { subject.in_journey? }.from(false).to true
@@ -44,6 +38,10 @@ describe Oystercard do
       it "changes 'in_journey' attribute from true to false" do
         subject.touch_in
         expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to false
+      end
+
+      it "deducts the fare from the balance" do
+        expect { subject.touch_out }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
       end
     end
 
@@ -59,7 +57,7 @@ describe Oystercard do
 
     describe '#touch_in' do
       it 'raises an error if balance is less than minimum amount' do
-        expect { subject.touch_in }.to raise_error "You need at least £#{Oystercard::MINIMUM_TRAVEL_BALANCE} to travel"
+        expect { subject.touch_in }.to raise_error "You need at least £#{Oystercard::MINIMUM_FARE} to travel"
       end
     end
 
