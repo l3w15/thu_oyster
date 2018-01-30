@@ -37,7 +37,7 @@ describe Oystercard do
 
       it "sets the entry station" do
         subject.touch_in(station)
-        expect(subject.entry_station).to eq station
+        expect(subject.journeys.last[:entry_station]).to eq station
       end
 
       it "puts the card in journey" do
@@ -57,16 +57,12 @@ describe Oystercard do
         expect { subject.touch_out(another_station) }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
       end
 
-      it "resets the entry station" do
+      it "sets the exit station" do
         subject.touch_in(station)
-        expect { subject.touch_out(another_station) }.to change { subject.entry_station }.to nil
+        subject.touch_out(another_station)
+        expect(subject.journeys.last[:exit_station]).to eq another_station
       end
 
-      # it "sets the exit station" do
-      #   subject.touch_in(station)
-      #   subject.touch_out(another_station)
-      #   expect(subject.exit_station).to eq another_station
-      # end
     end
 
     describe "#journeys" do
