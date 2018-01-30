@@ -1,31 +1,27 @@
 class Journey
 
   MINIMUM_FARE = 1
+  attr_reader :details
 
   def initialize
-    @in_journey = false
+    @details = {}
   end
 
-  def in_journey?
-    @in_journey
+  def start(station)
+    @details[:entry_station] = station
   end
 
-  def start
-    change_in_journey_status
-  end
-
-  def finish
-    change_in_journey_status
+  def finish(station)
+    @details[:exit_station] = station
+    fare
   end
 
   def fare
     MINIMUM_FARE
   end
 
-  private
-
-  def change_in_journey_status
-    @in_journey = !@in_journey
+  def journey_complete?
+    @details.include?(:entry_station) && @details.include?(:exit_station) 
   end
 
 end
