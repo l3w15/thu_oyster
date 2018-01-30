@@ -4,6 +4,7 @@ describe Oystercard do
 
   subject(:oystercard) { described_class.new }
   let(:station) {'a station'}
+  let(:another_station) {'another station'}
 
   context "when created" do
     it "has a balance of 0" do
@@ -48,19 +49,33 @@ describe Oystercard do
     describe '#touch_out' do
       it "changes 'in_journey' attribute from true to false" do
         subject.touch_in(station)
-        expect { subject.touch_out }.to change { subject.in_journey? }.from(true).to false
+        expect { subject.touch_out(another_station) }.to change { subject.in_journey? }.from(true).to false
       end
 
       it "deducts the fare from the balance" do
-        expect { subject.touch_out }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
+        subject.touch_in(station)
+        expect { subject.touch_out(another_station) }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
       end
 
       it "resets the entry station" do
         subject.touch_in(station)
-        expect { subject.touch_out }.to change { subject.entry_station }.to nil
+        expect { subject.touch_out(another_station) }.to change { subject.entry_station }.to nil
       end
+
+      # it "sets the exit station" do
+      #   subject.touch_in(station)
+      #   subject.touch_out(another_station)
+      #   expect(subject.exit_station).to eq another_station
+      # end
     end
 
+    describe "#journeys" do
+      it "returns a journey history" do
+        subject.touch_in(station)
+        subject.touch_out(another_station)
+        expect(subject.journeys).to eq [{entry_station: station, exit_station: another_station}]
+      end
+    end
   end
 
 
