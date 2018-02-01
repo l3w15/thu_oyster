@@ -15,15 +15,23 @@ class Oystercard
   end
 
   def touch_in(entry_station)
+    if @journeys.last.complete? == false
+      deduct(penalty_fare)
+    end
     fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
-    @journeys << {:entry_station => entry_station, :exit_station => nil}
+
+    journey = Journey.new
+
+    journey.start(entry_station)
     change_in_journey_status
   end
 
   def touch_out(exit_station)
-    deduct(MINIMUM_FARE)
-    @journeys.last[:exit_station] = exit_station
+    journey.complete? ? deduct(MINIMUM_FARE) : deduct(penalty_fare)
+
+    journey.finish(exit_station)
     change_in_journey_status
+    @journeys << journey
   end
 
   def in_journey?
