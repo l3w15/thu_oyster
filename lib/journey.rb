@@ -1,6 +1,7 @@
 class Journey
 
   MINIMUM_FARE = 1
+  PENALTY = 6
   attr_reader :details
 
   def initialize
@@ -17,11 +18,15 @@ class Journey
   end
 
   def fare
-    MINIMUM_FARE
+    if self.complete? == true then
+      MINIMUM_FARE
+    else
+      PENALTY
+    end
   end
 
-  def journey_complete?
-    @details.include?(:entry_station) && @details.include?(:exit_station) 
+  def complete?
+    @details.include?(:entry_station) && @details.include?(:exit_station)
   end
 
 end

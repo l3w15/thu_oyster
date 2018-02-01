@@ -1,3 +1,6 @@
+require_relative 'station'
+require_relative 'journey'
+
 class Oystercard
   attr_reader :balance, :journeys
   LIMIT = 90
@@ -7,6 +10,7 @@ class Oystercard
     @balance = 0
     @journeys = []
     @in_journey = false
+    @journey = nil
   end
 
   def top_up(amount)
@@ -15,23 +19,18 @@ class Oystercard
   end
 
   def touch_in(entry_station)
-    if @journeys.last.complete? == false
-      deduct(penalty_fare)
-    end
-    fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
-
-    journey = Journey.new
-
-    journey.start(entry_station)
+    # fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
+    deduct(penalty)
+    @journey = Journey.new
+    @journey.start(entry_station)
     change_in_journey_status
   end
 
   def touch_out(exit_station)
-    journey.complete? ? deduct(MINIMUM_FARE) : deduct(penalty_fare)
-
-    journey.finish(exit_station)
+    @journey.finish(exit_station)
     change_in_journey_status
-    @journeys << journey
+    @journeys << @journey
+    deduct(@journey.fare)
   end
 
   def in_journey?
@@ -51,6 +50,17 @@ class Oystercard
   def deduct(amount)
     @balance -= amount
   end
+
+  def penalty
+    if !@journeys.empty?
+      if !@journeys[-1].complete?
+        PENALTY
+      else
+        0
+      end 
+    end
+  end
+
 
   def change_in_journey_status
     @in_journey = !@in_journey
