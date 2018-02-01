@@ -44,6 +44,11 @@ describe Oystercard do
         subject.touch_in(station)
         expect(subject).to be_in_journey
       end
+
+      it "charges unpaid penalties" do
+        subject.touch_in(station)
+        expect { subject.touch_in(station) }.to change { subject.balance }.by (-Oystercard::PENALTY)
+      end 
     end
 
     describe '#touch_out' do
