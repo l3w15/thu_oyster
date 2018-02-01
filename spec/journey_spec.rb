@@ -32,7 +32,7 @@ describe Journey do
     it "shows the journey details" do
       subject.start(station)
       subject.finish(another_station)
-      expect(journey.details).to eq({entry_station: station, exit_station: another_station, penalty: nil})
+      expect(journey.details).to eq({entry_station: station, exit_station: another_station, paid: true})
     end
   end
 
@@ -44,6 +44,13 @@ describe Journey do
     end
 
     # returns false if forgotten to touch in or out for that journey
+  end
+
+  describe "#fare" do
+    it "returns the correct sume to deduct" do
+      subject.start(station)
+      expect(subject.fare).to eq 6
+    end
   end
 
 end

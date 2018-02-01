@@ -5,7 +5,8 @@ class Journey
   attr_reader :details
 
   def initialize
-    @details = {entry_station: nil, exit_station: nil, penalty: nil}
+    @details = {entry_station: nil, exit_station: nil, paid: false}
+    # have paid not penalty
   end
 
   def start(station)
@@ -22,11 +23,16 @@ class Journey
   end
 
   def fare
-    if @details[:penalty] == true then
-      @details[:penalty] == false 
-      PENALTY
+    if @details[:paid] == false then
+      if self.complete?
+        @details[:paid] = true
+        return MINIMUM_FARE
+      else
+        @details[:paid] = true
+        return PENALTY
+      end
     else
-      MINIMUM_FARE
+      0
     end
   end
 
