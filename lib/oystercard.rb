@@ -10,7 +10,6 @@ class Oystercard
   def initialize
     @balance = 0
     @history = []
-    @in_journey = false
     @journey = nil
   end
 
@@ -20,35 +19,16 @@ class Oystercard
   end
 
   def touch_in(entry_station)
-    fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
-    # if !@history.empty? then
-    #   @history[-1].check_for_penalty
-    #   if @history[-1].details[:penalty] == true then
-    #     @balance -= PENALTY
-    #     @history[-1].details[:penalty] = false
-    #   end
-    # end
-    if !@history.empty? then
-      deduct(@history[-1].fare)
-    end
-    @journey = Journey.new
-    @history << @journey
-    @journey.start(entry_station)
-    change_in_journey_status
+    journey_starter_checks
+    journey_starter(entry_station)
   end
 
   def touch_out(exit_station)
-    if @journey == nil
+    if @journey == nil then
       @journey = Journey.new
+      @history << @journey
     end
-    @journey.finish(exit_station)
-    @journey.check_for_penalty
-    change_in_journey_status
-    deduct(@journey.fare)
-    @journey.details[:paid] = true
-    # @journey.details[:penalty] = false
-    @history << @journey
-    @journey = nil
+    journey_finisher(exit_station)
   end
 
   def in_journey?
@@ -56,6 +36,26 @@ class Oystercard
   end
 
   private
+
+  def journey_starter_checks
+    fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
+    if !@history.empty? then
+      deduct(@history[-1].fare)
+    end
+  end
+
+  def journey_starter(entry_station)
+    @journey = Journey.new()
+    @history << @journey
+    @journey.start(entry_station)
+  end
+
+  def journey_finisher(exit_station)
+    @journey.finish(exit_station)
+    deduct(@journey.fare)
+    @journey.details[:paid] = true
+    @journey = nil
+  end
 
   def limit_reached?(amount)
     balance + amount > LIMIT
@@ -67,10 +67,6 @@ class Oystercard
 
   def deduct(amount)
     @balance -= amount
-  end
-
-  def change_in_journey_status
-    @in_journey = !@in_journey
   end
 
 end

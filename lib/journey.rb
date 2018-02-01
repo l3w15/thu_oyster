@@ -18,10 +18,6 @@ class Journey
     fare
   end
 
-  def check_for_penalty
-    @details[:penalty] = true if !self.complete?
-  end
-
   def fare
     if @details[:paid] == false then
       if self.complete?

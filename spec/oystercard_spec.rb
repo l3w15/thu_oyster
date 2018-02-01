@@ -10,9 +10,6 @@ describe Oystercard do
     it "has a balance of 0" do
       expect(subject.balance).to eq 0
     end
-    it "is not in journey" do
-      expect(subject).not_to be_in_journey
-    end
   end
 
 
@@ -31,31 +28,19 @@ describe Oystercard do
     end
 
     describe '#touch_in' do
-      it "changes 'in_journey' attribute from false to true" do
-        expect { subject.touch_in(station) }.to change { subject.in_journey? }.from(false).to true
-      end
 
       it "sets the entry station" do
         subject.touch_in(station)
         expect(subject.history.last.details[:entry_station]).to eq station
       end
 
-      it "puts the card in journey" do
-        subject.touch_in(station)
-        expect(subject).to be_in_journey
-      end
-
       it "charges unpaid penalties" do
         subject.touch_in(station)
         expect { subject.touch_in(station) }.to change { subject.balance }.by (-Oystercard::PENALTY)
-      end 
+      end
     end
 
     describe '#touch_out' do
-      it "changes 'in_journey' attribute from true to false" do
-        subject.touch_in(station)
-        expect { subject.touch_out(another_station) }.to change { subject.in_journey? }.from(true).to false
-      end
 
       it "deducts the fare from the balance" do
         subject.touch_in(station)
