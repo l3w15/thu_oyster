@@ -20,7 +20,7 @@ class Oystercard
 
   def touch_in(entry_station)
     # fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
-    deduct(penalty)
+    check_for_penalty
     @journey = Journey.new
     @journey.start(entry_station)
     change_in_journey_status
@@ -47,20 +47,17 @@ class Oystercard
     balance > MINIMUM_FARE
   end
 
-  def deduct(amount)
-    @balance -= amount
-  end
-
-  def penalty
+  def check_for_penalty
     if !@journeys.empty?
       if !@journeys[-1].complete?
-        PENALTY
-      else
-        0
-      end 
+        @balance -= PENALTY
+      end
     end
   end
 
+  def deduct(amount)
+    @balance -= amount
+  end
 
   def change_in_journey_status
     @in_journey = !@in_journey
