@@ -5,7 +5,7 @@ class Journey
   attr_reader :details
 
   def initialize
-    @details = {}
+    @details = {entry_station: nil, exit_station: nil}
   end
 
   def start(station)
@@ -26,7 +26,7 @@ class Journey
   end
 
   def complete?
-    @details.include?(:entry_station) && @details.include?(:exit_station)
+    @details[:entry_station] != nil && @details[:exit_station]
   end
 
 end
