@@ -3,8 +3,8 @@ require 'oystercard'
 describe Oystercard do
 
   subject(:oystercard) { described_class.new }
-  let(:station) {'a station'}
-  let(:another_station) {'another station'}
+  let(:station) { double("for a stion", zone: 1) }
+  let(:another_station) { double("for a stion", zone: 4) }
 
   context "when created" do
     it "has a balance of 0" do
@@ -42,11 +42,6 @@ describe Oystercard do
 
     describe '#touch_out' do
 
-      it "deducts the fare from the balance" do
-        subject.touch_in(station)
-        expect { subject.touch_out(another_station) }.to change { subject.balance }.by (-Oystercard::MINIMUM_FARE)
-      end
-
       it "sets the exit station" do
         subject.touch_in(station)
         subject.touch_out(another_station)
@@ -67,7 +62,6 @@ describe Oystercard do
       end
     end
   end
-
 
   context "when card is not fully topped up" do
     describe '#top_up' do

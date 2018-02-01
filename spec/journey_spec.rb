@@ -4,8 +4,8 @@ describe Journey do
 
   let(:card) { double("an oystercard", balance: 90) }
   subject(:journey) { described_class.new }
-  let(:station) { double('a station') }
-  let(:another_station) { double('another station') }
+  let(:station) { double("for a stion", zone: 1) }
+  let(:another_station) { double("for a stion", zone: 4) }
 
   describe "#start" do
     it "stores the entry_station" do
@@ -50,6 +50,16 @@ describe Journey do
     it "returns the correct sume to deduct" do
       subject.start(station)
       expect(subject.fare).to eq 6
+    end
+  end
+
+  describe "#calculate_fare" do
+    it "calculates the fare" do
+      subject.start(station)
+      subject.finish(another_station)
+      allow(station).to receive(:zone) { 1 }
+      allow(another_station).to receive(:zone) { 4 }
+      expect(subject.fare).to eq 4
     end
   end
 
