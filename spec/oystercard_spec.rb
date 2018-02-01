@@ -37,7 +37,7 @@ describe Oystercard do
 
       it "sets the entry station" do
         subject.touch_in(station)
-        expect(subject.journeys.last[:entry_station]).to eq station
+        expect(subject.history.last.details[:entry_station]).to eq station
       end
 
       it "puts the card in journey" do
@@ -60,16 +60,20 @@ describe Oystercard do
       it "sets the exit station" do
         subject.touch_in(station)
         subject.touch_out(another_station)
-        expect(subject.journeys.last[:exit_station]).to eq another_station
+        expect(subject.history.last.details[:exit_station]).to eq another_station
+      end
+
+      it "deducts the penalty fare if not touched in" do
+        expect { subject.touch_out(station) }.to change { subject.balance }.by (-Oystercard::PENALTY)
       end
 
     end
 
-    describe "#journeys" do
+    describe "#history" do
       it "returns a journey history" do
         subject.touch_in(station)
         subject.touch_out(another_station)
-        expect(subject.journeys).to eq [{entry_station: station, exit_station: another_station}]
+        expect(subject.history.last.details).to eq({entry_station: station, exit_station: another_station, penalty: false })
       end
     end
   end

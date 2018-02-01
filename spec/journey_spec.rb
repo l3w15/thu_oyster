@@ -32,7 +32,7 @@ describe Journey do
     it "shows the journey details" do
       subject.start(station)
       subject.finish(another_station)
-      expect(journey.details).to eq({entry_station: station, exit_station: another_station})
+      expect(journey.details).to eq({entry_station: station, exit_station: another_station, penalty: nil})
     end
   end
 
@@ -40,7 +40,7 @@ describe Journey do
     it "returns true if card has touched in and out" do
       subject.start(station)
       subject.finish(another_station)
-      expect(subject.journey_complete?).to eq true
+      expect(subject.complete?).to eq true
     end
 
     # returns false if forgotten to touch in or out for that journey

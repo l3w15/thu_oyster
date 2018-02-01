@@ -20,7 +20,7 @@ class Oystercard
   end
 
   def touch_in(entry_station)
-    # fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
+    fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
     if !@history.empty? then
       @history[-1].check_for_penalty
       if @history[-1].details[:penalty] == true then
