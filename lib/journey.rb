@@ -20,22 +20,15 @@ class Journey
 
   def fare
     if @details[:paid] == false then
-      if self.complete?
-        return calculate_fare
-      else
-        return PENALTY
-      end
+      self.complete? ? calculate_fare : PENALTY
     else
       0
     end
   end
 
   def calculate_fare
-    arr_of_zones = []
-    arr_of_zones << @details[:entry_station].zone
-    arr_of_zones << @details[:exit_station].zone
-    pounds = arr_of_zones.sort.reverse.inject(:-) + MINIMUM_FARE
-    return pounds
+    arr_of_zones = [@details[:entry_station].zone, @details[:exit_station].zone]
+    arr_of_zones.sort.reverse.inject(:-) + MINIMUM_FARE
   end
 
   def complete?

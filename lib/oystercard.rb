@@ -24,30 +24,24 @@ class Oystercard
   end
 
   def touch_out(exit_station)
-    if @journey == nil then
-      @journey = Journey.new
-      @history << @journey
-    end
+    journey_finisher_check
     journey_finisher(exit_station)
-  end
-
-  def in_journey?
-    @in_journey
   end
 
   private
 
   def journey_starter_checks
     fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
-    if !@history.empty? then
-      deduct(@history[-1].fare)
-    end
+    deduct(@history[-1].fare) if !@history.empty?
   end
 
   def journey_starter(entry_station)
-    @journey = Journey.new()
-    @history << @journey
+    @history << @journey = Journey.new
     @journey.start(entry_station)
+  end
+
+  def journey_finisher_check
+    @history << @journey = Journey.new if @journey == nil
   end
 
   def journey_finisher(exit_station)
