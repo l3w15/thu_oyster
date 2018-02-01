@@ -73,7 +73,7 @@ describe Oystercard do
       it "returns a journey history" do
         subject.touch_in(station)
         subject.touch_out(another_station)
-        expect(subject.history.last.details).to eq({entry_station: station, exit_station: another_station, penalty: false })
+        expect(subject.history.last.details).to eq({entry_station: station, exit_station: another_station, paid: true })
       end
     end
   end

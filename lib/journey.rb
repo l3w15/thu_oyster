@@ -25,10 +25,8 @@ class Journey
   def fare
     if @details[:paid] == false then
       if self.complete?
-        @details[:paid] = true
         return MINIMUM_FARE
       else
-        @details[:paid] = true
         return PENALTY
       end
     else

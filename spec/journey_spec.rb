@@ -32,7 +32,7 @@ describe Journey do
     it "shows the journey details" do
       subject.start(station)
       subject.finish(another_station)
-      expect(journey.details).to eq({entry_station: station, exit_station: another_station, paid: true})
+      expect(journey.details).to eq({entry_station: station, exit_station: another_station, paid: false})
     end
   end
 

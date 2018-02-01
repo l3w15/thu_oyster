@@ -45,6 +45,7 @@ class Oystercard
     @journey.check_for_penalty
     change_in_journey_status
     deduct(@journey.fare)
+    @journey.details[:paid] = true
     # @journey.details[:penalty] = false
     @history << @journey
     @journey = nil
