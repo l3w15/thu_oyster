@@ -21,7 +21,13 @@ class Oystercard
 
   def touch_in(entry_station)
     # fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
-    check_for_penalty
+    if !@history.empty? then
+      @history[-1].check_for_penalty
+      if @history[-1].details[:penalty] == true then
+        @balance -= PENALTY
+        @history[-1].details[:penalty] = false
+      end
+    end
     @journey = Journey.new
     @history << @journey
     @journey.start(entry_station)
@@ -33,9 +39,11 @@ class Oystercard
       @journey = Journey.new
     end
     @journey.finish(exit_station)
+    @journey.check_for_penalty
     change_in_journey_status
-    @history << @journey
     deduct(@journey.fare)
+    @journey.details[:penalty] = false
+    @history << @journey
     @journey = nil
   end
 
@@ -51,17 +59,6 @@ class Oystercard
 
   def able_to_travel?
     balance > MINIMUM_FARE
-  end
-
-  def check_for_penalty
-    if !@history.empty?
-      p !@history.empty?
-      p @history[-1]
-      p !@history[-1].complete?
-      if !@history[-1].complete?
-        @balance -= PENALTY
-      end
-    end
   end
 
   def deduct(amount)
