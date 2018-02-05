@@ -29,7 +29,8 @@ class Oystercard
   end
 
   private
-
+# fare works for @history[-1], as the object under @history[-1]
+# is an instance of class Journey, so you can use method from class journey to it. 
   def journey_starter_checks
     fail "You need at least £#{MINIMUM_FARE} to travel" unless able_to_travel?
     deduct(@history[-1].fare) if !@history.empty?
